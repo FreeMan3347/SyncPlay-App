@@ -234,6 +234,21 @@
     background: var(--bg);
   }
 
+  /* Several elements below set `display` directly on an ID selector,
+     which beats the browser's built-in [hidden] rule on specificity —
+     so JS setting `.hidden = true` on them silently had no visual
+     effect. #empty-state was the serious case (it blocked all input
+     since it's opaque and full-screen); #gesture-indicator and
+     #join-row would get stuck visible after their first hide too.
+     !important here is intentional insurance against the same mistake
+     recurring as more UI gets added. */
+  #empty-state[hidden],
+  #gesture-indicator[hidden],
+  #room-code-display[hidden],
+  #join-row[hidden] {
+    display: none !important;
+  }
+
   #empty-state h1 {
     font-size: 20px;
     margin: 0;
