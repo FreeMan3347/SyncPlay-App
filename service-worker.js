@@ -6,7 +6,7 @@
 // locally by the user each time and can be large, so they're
 // intentionally left alone here.
 
-const CACHE_NAME = 'syncplay-shell-v2';
+const CACHE_NAME = 'syncplay-shell-v3';
 
 const APP_SHELL_FILES = [
   './',
@@ -42,9 +42,19 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Cache-first for app shell files, network for everything else
-  // (e.g. the Socket.io connection, which isn't a normal fetch anyway).
+  // Network-first: always try to get the latest version while online,
+  // and only fall back to the cached copy if the network request fails
+  // (i.e. actually offline). The earlier cache-first version could get
+  // permanently stuck showing an old deploy even after new files were
+  // uploaded, since it never re-checked the network once something was
+  // cached — this fixes that.
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
