@@ -265,6 +265,25 @@ function initPlayer() {
     },
   });
 
+  // --- Desktop (mouse) equivalent of the touch gestures above ---------------
+  //
+  // attachGestureControls only listens for touchstart/touchmove/touchend,
+  // which a mouse never fires. Without this, controls auto-hide after 3s
+  // on desktop and nothing brings them back. Attached directly to the
+  // <video> element (not the whole stage) so clicks on buttons — which
+  // live elsewhere in the layout, not inside the video element itself —
+  // never bubble into this and cause double-triggering.
+
+  videoEl.addEventListener('click', () => {
+    if (!videoEl.src) return;
+    toggleControls();
+  });
+
+  videoStage.addEventListener('mousemove', () => {
+    if (!videoEl.src) return;
+    showControls();
+  });
+
   // --- Room panel ---------------------------------------------------------
 
   const ROOM_CAPACITY = 10;
