@@ -9,7 +9,7 @@
 // Loaded as a plain global script — depends on the Socket.io client
 // library being loaded first (see the CDN <script> tag in index.html).
 
-const SERVER_URL = 'https://sync-watch-server.onrender.com';
+const SERVER_URL = 'https://freeman3347.bonto.run';
 
 class SocketClient extends EventTarget {
   constructor() {
